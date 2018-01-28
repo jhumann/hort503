@@ -1,9 +1,9 @@
 ## Animal is-a object (yes,sort of confusing) look at the extra credit
-class Pet(object):
+class Animal(object):
     pass
 
 ## Dog is-a Animal
-class Dog(Pet):
+class Dog(Animal):
 
     def __init__(self, name):
         ## self has-a name
@@ -11,7 +11,7 @@ class Dog(Pet):
         print(f"Dog: {name}")
 
 ## Cat is-a Animal
-class Cat(Pet):
+class Cat(Animal):
 
     def __init__(self, name):
         ## self has-a name
@@ -30,8 +30,7 @@ class Person(object):
     def pet_name(self, name, pet):
         ## Person has-a pet of some kind
         self.pet = pet
-        Pet.__init__(pet)
-        print(f"So {name} has a pet called {pet}")
+        print(f"{name} has a pet called {pet}")
 
 ## Employee is-a Person
 class Employee(Person):
@@ -45,40 +44,54 @@ class Employee(Person):
 
 ## Fish is-a object
 class Fish(object):
-    pass
+
+    def __init__(self, name):
+        ## self has-a name
+        self.name = name
+        print(f"Fish: {name}")
 
 ## Salmon is-a Fish
 class Salmon(Fish):
-    pass
+
+    def __init__(self, name):
+        ## self has-a name
+        self.name = name
+        print(f"Salmon: {name}")
 
 ## Halibut is-a Fish
 class Halibut(Fish):
-    pass
+
+    def __init__(self, name):
+        ## self has-a name
+        self.name = name
+        print(f"Halibut: {name}")
 
 
 ## rover is-a Dog
 rover = Dog("Rover")
 
-## satan is-a Cat
-satan = Cat("Satan")
-
 ## mary is-a person
 mary = Person("Mary")
 
+## satan is-a Cat
+satan = Cat("Satan")
+
 ## Mary has-a pet
 mary.pet = satan
+mary.pet_name("Mary", satan)
 
 ## frank is-a Employee
 frank = Employee("Frank", 120000)
 
 ## frank has-a pet
 frank.pet = rover
+frank.pet_name("Frank", rover)
 
 ## flipper is-a Fish
-flipper = Fish()
+flipper = Fish("Flipper")
 
 ##crouse is-a Salmon
-crouse = Salmon()
+crouse = Salmon("Crouse")
 
 ## Harry is-a Halibut
-harry = Halibut()
+harry = Halibut("Harry")
