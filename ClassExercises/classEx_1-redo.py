@@ -41,7 +41,7 @@ def calculate_average(list_input):
     for i in range (0, list_length):
         list_sum += list_input[i]
 
-    # Average is calculated and returned
+    # Average is calculated and returned to main
     average = list_sum / list_length
     return average
 
