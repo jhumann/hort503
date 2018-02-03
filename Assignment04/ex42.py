@@ -30,7 +30,7 @@ class Person(object):
     def pet_name(self, name, pet):
         ## Person has-a pet of some kind
         self.pet = pet
-        print(f"{name} has a pet called {pet}")
+        print(f"{name} has a pet called {pet.name}")
 
 ## Employee is-a Person
 class Employee(Person):
