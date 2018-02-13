@@ -12,10 +12,9 @@
 from sys import argv
 script, input_fq, output_fq, min_qual_score, min_read_len = argv
 
-#min_qual_score = int(min_qual_score)
-#min_read_len = int(min_read_len)
-
-
+#
+# function that retrieves single sequence and return it as list
+#
 def get_read(fq):
     """Extract a single read from a FASTQ file.
 
@@ -42,7 +41,9 @@ def get_read(fq):
 # return read from out_list
     return out_list
 
-
+#
+# function that trims 5' end by quality and filters out short sequences
+#
 def trim_read_front(read, min_q, min_size):
     """Trims the low quality nucleotides from the front of a reads' sequences.
 
@@ -80,21 +81,20 @@ def trim_read_front(read, min_q, min_size):
     qual_score_ord = [ord(i) for i in qual_score]
     qual_score_num = [(i - 33) for i in qual_score_ord]
 
-
+# trim seq and qual_score by min_q
     for qual_numb in qual_score_num:
         if qual_numb < min_q:
             del seq[0]
             del qual_score[0]
-            #print(seq)
         elif qual_numb >= min_q:
             break
 
+# only return sequences min_size and longer
     if len(seq) < min_size:
         return False
 
+# convert trimmed seq and qual_score to strings and return 4 item list for each read
     clean_read_F = [name, ''.join(seq), divider, ''.join(qual_score)]
-    #print(clean_read_F)
-
     return clean_read_F
 
 #
@@ -122,61 +122,61 @@ def main(argv):
        - An integer indicating how large a read's nucleotide sequence must
          be after trimming in order to keep it.
     """
-# Define the inputs from the argv
+
+# define the inputs from the argv
     fq = input_fq
     filtered_fq = output_fq
     min_q = int(min_qual_score)
     min_size = int(min_read_len)
 
+# open and calculate number of reads for input file
     print(f"Opening {fq} for reading...")
-
-# calculate stats for old and new file
     in_f = open(fq, 'r').read()
     input_count = in_f.count('@cluster')
 
-#
+# start processing reads
     print(f"Opening {filtered_fq} for writing...")
 
+# specify the number of times the process needs to repeat
     start = 0
     end = input_count
     step = 1
-    with open(fq, 'r') as f:
 
+# retrieve a sequence, trim it and add to filtered_list if it passes inspection
+    with open(fq, 'r') as f:
         filtered_list = list()
 
         while start <= end:
             single_read = get_read(f)
-
             clean_read_F = trim_read_front(single_read, min_q, min_size)
-            # print(clean_read_F)
+
             if not clean_read_F:
                 start += step
                 continue
 
             filtered_list.append(clean_read_F)
-
-            # print(final_read)
-
             start += step
-            # print(start, end)
 
-# write trimmed reads to file
+# write trimmed reads to file with /n between lines
     with open(filtered_fq, 'w+') as f:
         for x in filtered_list:
-            # print(x, type(x))
             f.write('\n'.join(x))
             f.write('\n')
 
-# calculate stats for old and new file
+# print stats for output file
     print(f"{input_count} reads were found")
 
+# calculate stats for output file
     out_f = open(filtered_fq, 'r').read()
     output_count = out_f.count('@cluster')
+
+# calculate how many reads were removed and how many kept
     removed = input_count - output_count
     print(f"{removed} reads were removed")
     print(f"{output_count} reads were trimmed and kept")
     print("Done.")
 
-
-# Begin the program by calling the main function.
+#
+# begin the program by calling the main function.
+#
 main(argv)
