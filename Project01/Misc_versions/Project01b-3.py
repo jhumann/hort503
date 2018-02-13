@@ -9,7 +9,6 @@
 .. moduleauthor:: Jodi Humann
 
 """
-
 from sys import argv
 script, input_fq, output_fq, min_qual_score, min_read_len = argv
 
@@ -31,11 +30,16 @@ def get_read(fq):
 
     with open(fq, 'r') as f:
         fq_list = [line.strip() for line in f]
-        single_read = [fq_list.pop(0), fq_list.pop(0), fq_list.pop(0), fq_list.pop(0)]
+        for line in fq_list:
+            if ('@cluster' in line):
+                single_rd = [fq_list.pop(0), fq_list.pop(0), fq_list.pop(0), fq_list.pop(0)]
+                #print(single_read)
+                return single_rd
+            else:
+                False
 
-    print(single_read)
-    return single_read
-
+        #print(single_read)
+        #return single_read
 
 def trim_read_front(read, min_q, min_size):
     """Trims the low quality nucleotides from the front of a reads' sequences.
@@ -50,11 +54,11 @@ def trim_read_front(read, min_q, min_size):
     :type read: a list
 
     :param min_q:  The minimum quality score that a nucleotide must have to
-        not be trimmed (e.g. 20).
+        not be trimmed (e.g. 30).
     :type min_q:  integer
 
     :param min_size:  The minimum size that the sequence must have after
-        trimming to keep the read (e.g. 25).
+        trimming to keep the read (e.g. 30).
     :type min_size: integer
 
     :return: a list just like the the get_read() function returns but with the
@@ -63,9 +67,49 @@ def trim_read_front(read, min_q, min_size):
        desired minimum read length then this function returns False.
     :rtype: a list with four elements
     """
+# separate out items from input read list
+    name = read[0]
+    seq = read[1]
+    #seq_len = len(seq)
+    #print(seq_len)
+    divider = read[2]
+    qual_score = read[3]
+    qual_len = len(qual_score)
+# convert ASCII values to numbers and calulate qual score
+    qual_score_ord = [ord(i) for i in qual_score]
 
+    #print(qual_len)
+    qual_score_num = [(i - 33) for i in qual_score_ord]
+    #print(qual_score_num)
+    i = qual_score_num[0]
 
+# how do I get these to work with the if statements????
+    min_qual = int(min_q)
+    min_len = int(min_size)
 
+# for qual_score_num, trim of low quality bases from beginning
+    if qual_score_num[i] < 30:
+        qual_score_num.remove(i)
+    elif qual_score_num[i] >= 30:
+        False
+
+# determine how many bases were trimmed and trim seq and qual_score strings
+    #print(qual_score_num)
+    trim_len = len(qual_score_num)
+    #print(trim_len)
+    bases_rm = qual_len - trim_len
+    #print(bases_rm)
+    trim_seq = seq[bases_rm:]
+    #print(trim_seq)
+    trim_qual = qual_score[bases_rm:]
+    #print(trim_qual)
+
+# return trimmed read if length is greater than min_size
+    if trim_len >= 30:
+        clean_read_F = [name, trim_seq, divider, trim_qual]
+        #print(clean_read_F)
+
+    return clean_read_F
 
 #
 # The main function for the script.
@@ -97,21 +141,35 @@ def main(argv):
     min_q = int()
     min_size = int()
 
+
     print(f"Opening {fq} for reading...")
-    single_read = get_read(fq)
-
-    clean_read_F = trim_read_front(single_read, min_q, min_size)
-
-
+# calculate stats for old and new file
+    in_f = open(fq, 'r').read()
+    input_count = in_f.count('@cluster')
     print(f"Opening {filtered_fq} for writing...")
-    # write kept reads to file
-    #with open(filtered_fq, 'w') as file:
-    #    file.append(clean_read_F)
-    print("X reads were found")
-        # grep to count "@" in input_fq
-    print("X reads were removed")
-        # grep to count the reads in filtered_fq and to do math to find the # removed
-    print("X reads were trimmed and kept")
+
+    start = 0
+    end = input_count
+    step = 1
+    while start <= end:
+    #for x in range(0, end):
+        single_read = get_read(fq)
+        clean_read_F = trim_read_front(single_read, min_q, min_size)
+        final_read = '\n'.join(clean_read_F)
+        #print(final_read)
+        # write trimmed reads to file
+        with open(filtered_fq, 'a+') as file:
+            file.write(final_read + '\n')
+        start += step
+
+# calculate stats for old and new file
+    print(f"{input_count} reads were found")
+
+    out_f = open(filtered_fq, 'r').read()
+    output_count = out_f.count('@cluster')
+    removed = input_count - output_count
+    print(f"{removed} reads were removed")
+    print(f"{output_count} reads were trimmed and kept")
     print("Done.")
 
 
