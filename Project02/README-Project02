@@ -1,0 +1,11 @@
+README for Project02.py
+
+To run the script, enter the following on the command line:
+
+	python3 Project02.py <InputPileupFile> <OutputFilePrefix>
+
+
+
+The script will add a .txt or .png file extension onto the 'OutputFilePrefix'.
+
+This script removes the read boundary info ($ and ^.) prior to removing lines containing indels and skips.
