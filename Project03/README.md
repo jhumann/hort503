@@ -1,5 +1,7 @@
 Nextflow script: 'Project03.nf'
-BASH script: '
+
+BASH script: 'ReformatBlast.sh'
+
 Pipeline author: Jodi Humann
 
 
