@@ -19,15 +19,15 @@ This Nextflow pipeline contains two processes.
     using an evalue cutoff of 1e-6.  The BLAST results are returned in a tabular 
     format. 
 
-The BASH script run after the Next Flow script contains to processes.
+The BASH script run after the Nextflow pipeline contains two processes.
 
-3.) A simple 'cat' command to combine the BLAST output files into a single file for 
+1.) A simple 'cat' command to combine the BLAST output files into a single file for 
     the next step.
 
-4.) Python script called 'formatBlastResults.py' that determines the number of protein 
+2.) Python script called 'formatBlastResults.py' that determines the number of protein 
     alignment matches per input query sequence. The results are returned as a CSV file.
 
-The NextFlow results are returned in a directory that is created in the location the 
+The Nextflow results are returned in a directory that is created in the location the 
 pipeline is initiated from.  The parent directory is called 'Project03_results'.  There 
 are two sub-directories; 'splitSeq' and 'blastOutput' that correspond to the above 
 processes, respectively.
@@ -60,8 +60,9 @@ FASTA file as an '--input' variable.  Here is the command to submit to the SLURM
 
 The "--file" option can be changed to use any protein FASTA file.
 
-Once the Nexflow pipline has completed, place and run the 'ReformatBlast.sh' script from 
-the same directory used for the Nextflow pipeline.  The path to the Python script 
+Once the Nexflow pipline has completed, run the 'ReformatBlast.sh' script from 
+the same directory used for the Nextflow pipeline (that way script can see the 
+'Project_03-results' directory).  The path to the Python script 
 'formatBlastResults.py' is already specified in the BASH script.
 
   ./ReformatBlast.sh
